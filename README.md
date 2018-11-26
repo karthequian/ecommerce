@@ -10,7 +10,7 @@ In general, we will support 4 basic services:
 * Catalog: Services to view all of the items available in the store catalog.
 * Users: Services for a user to be able to login, and access their profiles
 * Cart: Services for a user to add specific items from the Catalog to a cart.
-* Checkout: Services that allows a user to checkout with 
+* Checkout: Services that allows a user to checkout and recieve an order confirmation.
 
 ### Must Haves:
 #### User
@@ -41,7 +41,7 @@ In general, we will support 4 basic services:
 * A user can save their carts
 
 #### Checkout
-* tbd
+* Integrate with paypal checkout
 
 ### API's
 
