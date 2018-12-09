@@ -1,61 +1,63 @@
-# ecommerce
+# Walkthrough
 
-This is a sample demo that depicts a set of ecommerce applications built with a microservices paradigm.
+You'll need Helm to run a bunch of things:
+Package Management: https://cloudnative.oracle.com/template.html#application-development/package-management/helm/readme.md
 
-## Usecases
+## Up and running:
 
-We'll target the following usecases for an MVP version of the demo. More usecases can be added later, but we'll focus on these as a start.
+### Logging
+Read more about EFK logging, and it's install:
+https://cloudnative.oracle.com/template.html#observability-and-analysis/logging/efk-stack
 
-In general, we will support 4 basic services:
-* Catalog: Services to view all of the items available in the store catalog.
-* Users: Services for a user to be able to login, and access their profiles
-* Cart: Services for a user to add specific items from the Catalog to a cart.
-* Checkout: Services that allows a user to checkout and recieve an order confirmation.
+Download and install:
+```
+curl -o /tmp/efk.tar.gz  https://raw.githubusercontent.com/oracle/cloudnative/master/observability-and-analysis/logging/efk-stack/efk.tar.gz
 
-### Must Haves:
-#### User
-* A user should be able to login with a username and password.
-* The act of logging in should return a token that can be used later on to validate the user session.
-* A user should be able to retrieve his profile.
-* A user consists of a firstname, lastname, address, id, email and password.
+tar -xzvf /tmp/efk.tar.gz
+```
 
-#### Catalog
-* Catalog will represent items available in the ecommerce site.
-* Each item will have a name, price, SKU (unique ID).
+Get Kibana the URL and port:
+```
+kubectl get services | grep kibana-logging
+```
 
-#### Cart
-* Catalog items can be added to a cart for a logged in user
-* Cart will display all currently added items for a specific user.
+### Monitoring
+Read more about how to setup prometheus: https://cloudnative.oracle.com/template.html#observability-and-analysis/telemetry/prometheus
 
-#### Checkout
-* Checkout will take the items in a cart, and create an order for the user.
+Install:
+```
+helm install stable/prometheus --name prom-demo -f ./src/prometheus-values.yaml
+```
 
-### Nice to Haves:
-#### User:
-* A user can create an account.
+Get the URL:
+Node port service (http://(node-ip):30001). To get the node-ip:
+```
+kubectl get nodes
+```
 
-#### Catalog:
-* Ability to add a list and discount prices
+### Tracing
+Install Jaeger via instructions: [https://github.com/jaegertracing/jaeger-kubernetes](https://github.com/jaegertracing/jaeger-kubernetes)
 
-#### Cart
-* A user can save their carts
+*Note: This is just the dev setup; don't use for prod*
 
-#### Checkout
-* Integrate with paypal checkout
+```
+kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-kubernetes/master/all-in-one/jaeger-all-in-one-template.yml
 
-### API's
+```
 
-#### User
-* POST /users/ (Login, returns a session token)
-* GET /users/<userID> (Authenticated, returns user information)
+## Demo it with an app
 
-#### Catalog
-* GET /catalog (returns all catalog info)
-* GET /catalog/<itemID> (returns a specific item in catalog based on ID)
+Demo ecommerce application.
 
-#### Cart
-* GET /cart/<cartID> (Authenticated, returns a )
-* POST /cart (Authenticated, creates or updates a cart for a user)
+Deploy:
+```
+kubectl apply -f microservices.yaml
+```
 
-#### Checkout
-* POST /checkout?cart=<cartID> (Authenticated, creates an order for the cart ID passed)
+Look at logging with products, monitoring with users and telemetry with cart
+
+## Read More
+
+Jaeger Helm chart: [https://github.com/helm/charts/tree/master/incubator/jaeger](https://github.com/helm/charts/tree/master/incubator/jaeger)
+
+Opentracing Tutorial: [https://github.com/yurishkuro/opentracing-tutorial](https://github.com/yurishkuro/opentracing-tutorial)

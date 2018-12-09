@@ -1,0 +1,11 @@
+FROM golang
+MAINTAINER Karthik Gaekwad
+
+RUN go get github.com/prometheus/client_golang/prometheus
+RUN go get github.com/prometheus/client_golang/prometheus/promhttp
+RUN go get github.com/gorilla/mux
+COPY . /go/src/github.com/karthequian/ecommerce/src
+WORKDIR /go/src/github.com/karthequian/ecommerce/src/catalog
+RUN go get && go build -o /bin/catalog
+
+ENTRYPOINT ["/bin/catalog"]
